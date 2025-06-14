@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="${animation.title + ' 상세보기'}">애니메이션 상세</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f7f9fc 0%, #e8f4f8 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .home-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #109CEB, #0d7bc4);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(16, 156, 235, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 156, 235, 0.4);
+            color: white;
+        }
+
+        .detail-container {
+            max-width: 1000px;
+            margin: 60px auto 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .detail-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #109CEB, #4fb3d9, #109CEB);
+        }
+
+        .detail-card {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .detail-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .detail-content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .detail-content p strong {
+            color: #109CEB;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .detail-content p:last-of-type {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fbff, #e8f4f8);
+            border-radius: 12px;
+            border-left: 4px solid #109CEB;
+            font-style: italic;
+            color: #555;
+        }
+
+        .detail-image {
+            position: relative;
+        }
+
+        .poster-img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .poster-img:hover {
+            transform: scale(1.02);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #e8f4f8, #d1e7dd);
+            border-radius: 15px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #109CEB;
+            font-size: 3rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+            color: white;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #109CEB, #0d7bc4);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin: 30px 40px;
+            box-shadow: 0 5px 15px rgba(16, 156, 235, 0.3);
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 156, 235, 0.4);
+            color: white;
+        }
+
+        .review-list {
+            padding: 0 40px 40px;
+        }
+
+        .review-list h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #109CEB;
+            display: inline-block;
+        }
+
+        .review-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .review-table thead {
+            background: linear-gradient(135deg, #109CEB, #4fb3d9);
+            color: white;
+        }
+
+        .review-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .review-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .review-table tbody tr:hover {
+            background-color: #f8fbff;
+        }
+
+        .review-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .review-link {
+            color: #109CEB;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .review-link:hover {
+            color: #0d7bc4;
+            text-decoration: underline;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .detail-container {
+                margin: 70px auto 20px;
+            }
+
+            .detail-card {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 30px 20px;
+                text-align: center;
+            }
+
+            .detail-content h2 {
+                font-size: 2rem;
+            }
+
+            .poster-img {
+                max-width: 250px;
+                margin: 0 auto;
+            }
+
+            .btn-back {
+                margin: 20px;
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+
+            .review-list {
+                padding: 0 20px 30px;
+            }
+
+            .review-table {
+                font-size: 0.9rem;
+            }
+
+            .review-table th,
+            .review-table td {
+                padding: 12px 15px;
+            }
+
+            .home-link {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .detail-content h2 {
+                font-size: 1.7rem;
+            }
+
+            .review-table th:nth-child(3),
+            .review-table td:nth-child(3) {
+                display: none;
+            }
+
+            .review-table th,
+            .review-table td {
+                padding: 10px 12px;
+            }
+        }
+
+        /* 애니메이션 효과 */
+        .detail-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .review-table tbody tr {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<a href="/" class="home-link"><i class="fas fa-home"></i></a>
+
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="detail-content">
+            <h2 th:text="${animation.title}">애니메이션 제목</h2>
+            <p><strong>감독:</strong> <span th:text="${animation.director}">감독명</span></p>
+            <p><strong>개봉일:</strong> <span th:text="${#dates.format(animation.releaseDate, 'yyyy-MM-dd')}">날짜</span></p>
+            <p><strong>카테고리:</strong> <span th:text="${animation.category.categoryName}">카테고리명</span></p>
+            <p><strong>설명:</strong></p>
+            <p th:text="${animation.description}">애니메이션 설명</p>
+
+            <a href="/" class="back-btn">목록으로 돌아가기</a>
+        </div>
+        <div class="detail-image">
+			<img th:src="@{'/images/' + ${imageNames[animation.animationId]} + '.jpg'}" 
+			     th:alt="${animation.title}"
+			     class="poster-img"
+			     onerror="this.style.display='none'; this.parentElement.querySelector('.image-placeholder').style.display='flex';">
+			<div class="image-placeholder">
+			    <i class="fas fa-image"></i>
+			</div>
+        </div>
+    </div>
+	
+	<!-- 리뷰 작성 버튼 -->
+	<a th:href="@{'/review/write?animationId=' + ${animation.animationId}}" class="btn btn-back">
+	    <i class="fas fa-pen"></i> 리뷰 작성
+	</a>
+	 
+    <!-- 리뷰 목록 -->
+    <div class="review-list">
+        <h3><i class="fas fa-comments"></i> 리뷰 목록</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-star"></i> 제목</th>
+                    <th><i class="fas fa-user"></i> 작성자</th>
+                    <th><i class="fas fa-calendar"></i> 작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+				<tr th:each="review : ${reviewList}">
+				    <td>
+				        <a th:href="@{'/review/' + ${review.reviewId}}"
+				           th:text="${review.title}"
+				           class="review-link"></a>
+				    </td>
+				    <td th:text="${review.user.username}">작성자명</td>
+				    <td th:text="${#dates.format(review.reviewDate, 'yyyy-MM-dd')}">작성일</td>
+				</tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

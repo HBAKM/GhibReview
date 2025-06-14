@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지브리뷰 - 지브리 애니메이션 리뷰</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --main-color: rgb(16, 156, 235);
+            --main-color-light: rgba(16, 156, 235, 0.1);
+            --main-color-dark: rgb(12, 124, 188);
+            --hover-color: #0d7bc4;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 상단 네비게이션 */
+        .top-nav {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-links {
+            text-align: right;
+        }
+
+        .nav-links a {
+            color: var(--main-color);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--main-color-dark);
+            text-decoration: none;
+        }
+
+        .user-greeting {
+            color: var(--main-color-dark);
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        /* 심플한 메인 제목 */
+        .main-title {
+            background: linear-gradient(135deg, var(--main-color) 0%, var(--hover-color) 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+            margin: 0;
+        }
+
+        .main-title h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-title .subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .main-title .description {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .main-title .btn-write {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-title .btn-write:hover {
+            background: white;
+            color: var(--main-color);
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 카테고리 메뉴 */
+        .category-menu {
+            text-align: center;
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+
+        .category-btn {
+            background-color: white;
+            color: var(--main-color);
+            border: 2px solid var(--main-color);
+            padding: 12px 30px;
+            margin: 0 10px 10px 10px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-btn:hover {
+            background-color: var(--main-color);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 156, 235, 0.3);
+        }
+
+        .category-btn.active {
+            background-color: var(--main-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 156, 235, 0.3);
+        }
+
+        /* 애니메이션 그리드 */
+        .animation-grid {
+            margin: 50px 0;
+            padding: 0 20px;
+        }
+
+        .animation-poster {
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .animation-poster:hover {
+            transform: translateY(-10px);
+        }
+
+        .poster-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            height: auto;
+        }
+
+        .poster-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .poster-image {
+            width: 100%;
+            height: auto;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .poster-img {
+            width: 100%;
+            height: auto;
+            min-height: 200px;
+            max-height: none;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+
+        .poster-img-hover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+
+        .poster-image:hover .poster-img {
+            opacity: 0 !important;
+        }
+
+        .poster-image:hover .poster-img-hover {
+            opacity: 1 !important;
+        }
+
+        .poster-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .poster-info h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, var(--main-color), var(--hover-color));
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(16, 156, 235, 0.3);
+        }
+
+        .view-btn:hover {
+            background: linear-gradient(135deg, var(--hover-color), var(--main-color-dark));
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 156, 235, 0.4);
+        }
+
+        /* 이미지 로딩 실패 시 대체 스타일 */
+        .poster-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--main-color-light), var(--main-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--main-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 0 20px 0;
+            margin-top: 80px;
+        }
+
+        .footer h5 {
+            color: var(--main-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--main-color);
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            margin-top: 30px;
+            padding-top: 20px;
+            text-align: center;
+            color: #95a5a6;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .main-title {
+                padding: 40px 0;
+            }
+
+            .main-title h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-title .subtitle {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+
+            .main-title .description {
+                font-size: 1.1rem;
+            }
+
+            .category-btn {
+                margin: 5px;
+                padding: 10px 20px;
+            }
+
+            .nav-links {
+                text-align: center;
+                margin-top: 10px;
+            }
+
+            .animation-grid {
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title h1 {
+                font-size: 2rem;
+            }
+
+            .main-title .btn-write {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 네비게이션 -->
+    <div class="top-nav">
+        <div class="container">
+            <div class="nav-links">
+                <!-- 로그인하지 않은 경우 -->
+                <span th:if="${session.loggedInUser == null}">
+                    <a href="/signup"><i class="fas fa-user-plus"></i> 회원가입</a>
+                    <a href="/login"><i class="fas fa-sign-in-alt"></i> 로그인</a>
+                </span>
+                
+                <!-- 로그인한 경우 -->
+                <span th:if="${session.loggedInUser != null}">
+                    <span class="user-greeting">
+                        <i class="fas fa-user"></i> <span th:text="${session.loggedInUser.username}"></span>님 안녕하세요!
+                    </span>
+                    <a href="/mypage"><i class="fas fa-user-cog"></i> 마이페이지</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 심플한 메인 제목 -->
+    <div class="main-title">
+        <div class="container">
+            <h1><i class="fas fa-film"></i> 지브리뷰</h1>
+            <p class="subtitle">GHIBREVIEW</p>
+            <p class="description">스튜디오 지브리의 아름다운 작품들에 대한 리뷰를 공유해보세요</p>
+            <a href="/review/write" class="btn-write">
+                <i class="fas fa-pen-fancy"></i>
+                리뷰 작성하기
+            </a>
+        </div>
+    </div>
+
+    <!-- 카테고리 메뉴 -->
+    <div class="category-menu">
+        <div class="container">
+            <a href="/" class="category-btn" th:classappend="${selectedCategoryId == null ? 'active' : ''}">
+                <i class="fas fa-th-large"></i> 전체
+            </a>
+            <a th:each="category : ${categories}" 
+               th:href="@{'/?categoryId=' + ${category.categoryId}}" 
+               th:text="${category.categoryName}"
+               th:classappend="${selectedCategoryId != null && selectedCategoryId == category.categoryId ? 'active' : ''}"
+               class="category-btn">
+                카테고리
+            </a>
+        </div>
+    </div>
+
+    <!-- 애니메이션 포스터 그리드 -->
+    <div class="container">
+        <div class="animation-grid">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 animation-poster" th:each="animation : ${animations}">
+                    <div class="poster-card">
+                        <div class="poster-image">
+                            <!-- 일반 포스터 이미지 -->
+                            <img th:src="@{'/images/' + ${imageNames[animation.animationId]} + '.jpg'}" 
+                                 th:alt="${animation.title}"
+                                 class="poster-img"
+                                 onerror="this.style.display='none'; this.parentElement.querySelector('.poster-placeholder').style.display='flex';">
+
+                            <!-- 호버용 포스터 이미지 -->
+                            <img th:src="@{'/images/' + ${imageNames[animation.animationId]} + '_.jpg'}" 
+                                 th:alt="${animation.title}"
+                                 class="poster-img-hover"
+                                 onerror="this.style.display='none';">
+                            
+                            <!-- 이미지 로딩 실패 시 대체 표시 -->
+                            <div class="poster-placeholder" style="display: none;">
+                                <span th:text="${animation.title}"></span>
+                            </div>
+                        </div>
+                        <div class="poster-info">
+                            <a th:href="@{'/animation/' + ${animation.animationId}}" class="view-btn">
+                                <i class="fas fa-eye"></i> 상세보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 애니메이션이 없는 경우 -->
+        <div th:if="${#lists.isEmpty(animations)}" class="text-center py-5">
+            <i class="fas fa-film" style="font-size: 4rem; color: var(--main-color); opacity: 0.3;"></i>
+            <h3 class="text-muted mt-3">해당 카테고리에 애니메이션이 없습니다</h3>
+            <p class="text-muted">다른 카테고리를 선택해보세요</p>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-film"></i> 지브리뷰</h5>
+                    <p>스튜디오 지브리의 아름다운 작품들에 대한 리뷰와 감상을 공유하는 커뮤니티입니다. 
+                       여러분의 소중한 리뷰를 통해 더 많은 사람들이 지브리의 매력을 느낄 수 있기를 바랍니다.</p>
+                </div>
+                <div class="col-md-2">
+                    <h5>바로가기</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/"><i class="fas fa-home"></i> 홈</a></li>
+                        <li th:if="${session.loggedInUser == null}"><a href="/login"><i class="fas fa-sign-in-alt"></i> 로그인</a></li>
+                        <li th:if="${session.loggedInUser == null}"><a href="/signup"><i class="fas fa-user-plus"></i> 회원가입</a></li>
+                        <li th:if="${session.loggedInUser != null}"><a href="/mypage"><i class="fas fa-user-cog"></i> 마이페이지</a></li>
+                        <li th:if="${session.loggedInUser != null}"><a href="/review/write"><i class="fas fa-pen"></i> 리뷰 작성</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>카테고리</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/"><i class="fas fa-th-large"></i> 전체</a></li>
+                        <li th:each="category : ${categories}">
+                            <a th:href="@{'/?categoryId=' + ${category.categoryId}}" 
+                               th:text="${category.categoryName}">카테고리</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>스튜디오 지브리</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#"><i class="fas fa-external-link-alt"></i> 공식 홈페이지</a></li>
+                        <li><a href="#"><i class="fab fa-youtube"></i> 공식 유튜브</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> 공식 트위터</a></li>
+                        <li><a href="#"><i class="fas fa-info-circle"></i> 지브리 소개</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 지브리뷰. 이 사이트는 팬 사이트이며 스튜디오 지브리와 직접적인 관련이 없습니다.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

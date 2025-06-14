@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - 지브리뷰</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --main-color: #109CEB;
+            --hover-color: #0d7bc4;
+        }
+
+        body {
+            background-color: #f7f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--main-color), var(--hover-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .mypage-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--main-color), var(--hover-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-title i {
+            margin-right: 10px;
+            color: var(--main-color);
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .review-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .no-reviews {
+            text-align: center;
+            color: #6c757d;
+            padding: 40px 20px;
+        }
+
+        .no-reviews i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+
+        /* 리뷰 테이블 스타일 */
+        .review-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .review-table thead {
+            background: linear-gradient(135deg, var(--main-color), var(--hover-color));
+            color: white;
+        }
+
+        .review-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .review-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .review-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .review-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .review-link {
+            color: var(--main-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .review-link:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        .animation-title {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .home-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .home-link:hover {
+            color: #f8f9fa;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--main-color), var(--hover-color));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 156, 235, 0.4);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .mypage-container {
+                padding: 0 15px;
+            }
+
+            .review-table {
+                font-size: 0.9rem;
+            }
+
+            .review-table th,
+            .review-table td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .review-table th:nth-child(3),
+            .review-table td:nth-child(3) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container text-center">
+            <h1><i class="fas fa-user-circle"></i> 마이페이지</h1>
+            <p class="lead">내 정보와 작성한 리뷰를 확인하세요</p>
+            <a href="/" class="home-link">
+                <i class="fas fa-home"></i> 홈으로 돌아가기
+            </a>
+        </div>
+    </div>
+
+    <div class="mypage-container">
+        <!-- 프로필 정보 -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 th:text="${user.username}">사용자명</h3>
+                <p class="text-muted">지브리 애니메이션 리뷰 회원</p>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-info-circle"></i> 계정 정보
+                </div>
+                <div class="info-item">
+                    <span class="info-label">사용자 이름</span>
+                    <span class="info-value" th:text="${user.username}">사용자명</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">로그인 ID</span>
+                    <span class="info-value" th:text="${user.loginId}">로그인ID</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">작성한 리뷰</span>
+                    <span class="info-value" th:text="${reviewCount ?: 0} + '개'">0개</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 내가 쓴 리뷰 목록 -->
+        <div class="review-section">
+            <div class="info-title">
+                <i class="fas fa-star"></i> 내가 쓴 리뷰
+            </div>
+
+            <!-- 리뷰가 없을 때 -->
+            <div th:if="${reviews == null or reviews.isEmpty()}" class="no-reviews">
+                <i class="fas fa-pen-alt"></i>
+                <h5>아직 작성한 리뷰가 없습니다</h5>
+                <p class="text-muted">지브리 애니메이션을 보고 첫 리뷰를 작성해보세요!</p>
+                <a href="/" class="btn btn-primary mt-3">
+                    <i class="fas fa-film"></i> 애니메이션 둘러보기
+                </a>
+            </div>
+
+            <!-- 리뷰 목록 테이블 -->
+            <div th:if="${reviews != null and !reviews.isEmpty()}">
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-pen"></i> 리뷰 제목</th>
+                            <th><i class="fas fa-film"></i> 애니메이션</th>
+                            <th><i class="fas fa-calendar"></i> 작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="review : ${reviews}">
+                            <td>
+                                <a th:href="@{'/review/' + ${review.reviewId}}"
+                                   th:text="${review.title}"
+                                   class="review-link">리뷰 제목</a>
+                            </td>
+                            <td>
+                                <span th:text="${review.animation.title}" class="animation-title">애니메이션 제목</span>
+                            </td>
+                            <td th:text="${#dates.format(review.reviewDate, 'yyyy-MM-dd')}">작성일</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
